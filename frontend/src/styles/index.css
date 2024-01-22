@@ -1,0 +1,9 @@
+body, html {
+    background: #f4f4f4; /* Fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #a6c0fe, #f6f6f6); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #a6c0fe, #f6f6f6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    font-family: 'Roboto', sans-serif; /* Use Roboto or your preferred font */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}

@@ -1,0 +1,26 @@
+.ui-paginator {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    padding: 10px;
+}
+
+.ui-paginator .ui-paginator-page {
+    color: #3f51b5;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.ui-paginator .ui-paginator-page.ui-state-active {
+    font-weight: bold;
+    color: #fff;
+    background-color: #3f51b5;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+.ui-paginator .ui-paginator-prev,
+.ui-paginator .ui-paginator-next {
+    color: #3f51b5;
+    cursor: pointer;
+}

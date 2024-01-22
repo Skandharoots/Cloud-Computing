@@ -1,0 +1,94 @@
+
+
+.LoginMain {
+  background-color: #ffffff;
+  border-radius: 25px;
+  border: 4px solid #1b2430;
+  padding: 20px;
+  margin: 150px auto;
+  max-width: 400px;
+  height: 350px;
+  padding: 20px;
+  text-align: center;
+  }
+  
+  .LoginMain h2 {
+    color: #1b2430;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .LoginMail, .LoginPass {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  .LoginMail label, .LoginPass label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  .button1 {
+    background-color: #1b2430; /* Green */
+    border-radius: 25px;
+    border: 1px solid #1b2430;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .ForgotPassHref, .RegisterHref {
+    margin-top: 20px;
+    display: block;
+  }
+
+
+
+
+  .ForgotPassHref a {
+    background-color: #1b2430; /* Green */
+    border-radius: 25px;
+    border: 1px solid #1b2430;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    position:relative;
+    float: left;
+    display: block;
+  }
+  
+ .RegisterHref a {
+    background-color: #1b2430; /* Green */
+    border-radius: 25px;
+    border: 1px solid #1b2430;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    float: right;
+    position: relative;
+    display: block;
+    transition: background-color 0.3s;
+  }
+  
+  .ForgotPassHref a:hover, .RegisterHref a:hover, .button1:hover {
+    background-color: #4f6d94;
+  }

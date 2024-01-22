@@ -1,0 +1,825 @@
+openapi: 3.0.0
+info:
+  title: 'Cloud Computing Systems Core API'
+  contact:
+    email: 242213@edu.p.lodz.pl
+  version: 1.0.2
+servers:
+  -
+    url: 'https://ccscore.it-core.fun'
+    description: 'Development server'
+paths:
+  /api/register:
+    post:
+      tags:
+        - Auth
+      summary: 'Register into the system, create new user'
+      operationId: 628bc9b0cf358dd0bc0777b8e80311c3
+      requestBody:
+        description: 'User registration data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  example: 'John Doe'
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                  example: john.doe@gmail.com
+                password:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+                password_confirmation:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+              type: object
+      responses:
+        '204':
+          description: 'User registered successfully'
+        '422':
+          description: 'Validation error'
+  /api/login:
+    post:
+      tags:
+        - Auth
+      summary: 'Login to the system, start session'
+      operationId: ad4049f968af4d3f293c52fc8d2a53cf
+      requestBody:
+        description: 'User login data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                  example: john.doe@gmail.com
+                password:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+              type: object
+      responses:
+        '204':
+          description: 'User logged in successfully'
+        '422':
+          description: 'Validation error'
+  /api/logout:
+    post:
+      tags:
+        - Auth
+      summary: 'Logout from the system, end session'
+      operationId: 6fa02cb87f35edc7bfb6046b0bae2f6b
+      responses:
+        '204':
+          description: 'User logged out successfully'
+  /api/user:
+    get:
+      tags:
+        - Auth
+      summary: 'Get currently logged in user'
+      operationId: e2744e00adeb069eb1480a8f4c6a6a3d
+      responses:
+        '200':
+          description: 'User data'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { $ref: '#/components/schemas/UserResource' }
+                type: object
+  /sanctum/csrf-cookie:
+    get:
+      tags:
+        - Auth
+      summary: 'Get CSRF cookie'
+      operationId: 67198b23664a60c899fb575b947af487
+      responses:
+        '204':
+          description: 'Cookie set successfully'
+  /api/azure-files:
+    get:
+      tags:
+        - Azure
+      summary: 'Get all files stored in azure cloud cold blob storage.'
+      description: "This endpoint is used to get all files stored in azure cloud cold blob storage. It is paginated and can be filtered by user_uuid.\n            User can only get files that he uploaded, must be logged in to use this endpoint and have AZURE_READ permission."
+      operationId: a3fe24ce3512c6124cc75849b8ff6dc0
+      parameters:
+        -
+          $ref: '#/components/parameters/filter_by_user_uuid_param_required'
+        -
+          $ref: '#/components/parameters/page'
+        -
+          $ref: '#/components/parameters/per_page'
+        -
+          $ref: '#/components/parameters/paginate'
+      responses:
+        '200_____1':
+          description: 'Success response, returns paginated files, per page 15'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/FileResource' } }
+                  links: { $ref: '#/components/schemas/LinksResponsePart' }
+                  meta: { $ref: '#/components/schemas/MetaResponsePart' }
+                type: object
+        '200_____2':
+          description: 'Success response, returns not paginated files'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/FileResource' } }
+                type: object
+        '400':
+          description: 'Missing filter[user_uuid], it is required.'
+        '401':
+          description: Unauthenticated
+        '403':
+          description: 'This action is unauthorized.'
+        '404':
+          description: 'User not found'
+    post:
+      tags:
+        - Azure
+      summary: 'Upload file to azure cloud cold blob storage.'
+      description: 'This endpoint is used to upload file to azure cloud cold blob storage. User must be logged in to use this endpoint and have AZURE_UPLOAD permission.'
+      operationId: 093c492e55b8d926ccb79d09f320ad5b
+      requestBody:
+        description: 'File to upload'
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              required:
+                - file
+              properties:
+                file:
+                  description: 'File to upload'
+                  type: string
+                  format: binary
+              type: object
+      responses:
+        '200':
+          description: 'Success response, returns file'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { $ref: '#/components/schemas/FileResource' }
+                type: object
+        '400':
+          description: 'Missing file, it is required.'
+        '401':
+          description: Unauthenticated
+        '403':
+          description: 'This action is unauthorized.'
+        '404':
+          description: 'File not found'
+  '/api/azure-files/{uuid}':
+    get:
+      tags:
+        - Azure
+      summary: 'Get file stored in azure cloud cold blob storage.'
+      description: 'This endpoint is used to get file stored in azure cloud cold blob storage. User can only get file that he uploaded, must be logged in to use this endpoint and have AZURE_READ permission.'
+      operationId: f4f17c8a25e8ab75bf057d9f2382be35
+      responses:
+        '200':
+          description: 'Success response, returns file'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { $ref: '#/components/schemas/FileResource' }
+                type: object
+        '401':
+          description: Unauthenticated
+        '403':
+          description: 'This action is unauthorized.'
+        '404':
+          description: 'File not found'
+    put:
+      tags:
+        - Azure
+      summary: 'Update file stored in azure cloud cold blob storage.'
+      description: 'This endpoint is used to update file stored in azure cloud cold blob storage. User can only update file that he uploaded, must be logged in to use this endpoint and have AZURE_UPDATE permission.'
+      operationId: 889e5e4b33d953782c56e4b5350c813b
+      requestBody:
+        description: 'User update data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - email
+              properties:
+                filename:
+                  description: 'File name with extension'
+                  type: string
+                  maxLength: 255
+                  example: java_is_terrible.jpg
+                version:
+                  type: integer
+                  format: int32
+                  example: 1
+              type: object
+      responses:
+        '200':
+          description: 'File updated.'
+        '401':
+          description: Unauthenticated
+        '403':
+          description: 'This action is unauthorized.'
+        '404':
+          description: 'File not found'
+        '422':
+          description: 'Validation error'
+    delete:
+      tags:
+        - Azure
+      summary: 'Delete file stored in azure cloud cold blob storage.'
+      description: "This endpoint is used to delete file stored in azure cloud cold blob storage.\n            User can only delete file that he uploaded, must be logged in to use this endpoint and have AZURE_DELETE permission.\n            This action is irreversible!"
+      operationId: 35342eb63f1a45e08484db7c68d9dfb8
+      responses:
+        '200':
+          description: 'File deleted.'
+        '401':
+          description: Unauthenticated
+        '403':
+          description: 'This action is unauthorized.'
+        '404':
+          description: 'File not found'
+  '/api/azure-files/{uuid}/download':
+    get:
+      tags:
+        - Azure
+      summary: 'Download file stored in azure cloud cold blob storage.'
+      description: "This endpoint is used to download file stored in azure cloud cold blob storage.\n            User can only download file that he uploaded, must be logged in to use this endpoint and have AZURE_DOWNLOAD permission."
+      operationId: b1f123537992533e15470a09d9947535
+      responses:
+        '200':
+          description: 'File downloaded.'
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+                example: 'bXkgbmV3IGZpbGUgY29udGVudHM= ...'
+        '401':
+          description: Unauthenticated
+        '403':
+          description: 'This action is unauthorized.'
+        '404':
+          description: 'File not found'
+  /api/logs:
+    get:
+      tags:
+        - Log
+      summary: 'Get all logs'
+      operationId: 9cd32627d593f15f279d3eaef0b421be
+      parameters:
+        -
+          $ref: '#/components/parameters/filter_by_user_uuid_param_required'
+        -
+          $ref: '#/components/parameters/filter_by_type_param'
+        -
+          $ref: '#/components/parameters/page'
+        -
+          $ref: '#/components/parameters/per_page'
+        -
+          $ref: '#/components/parameters/paginate'
+      responses:
+        '200_____1':
+          description: 'Success response, returns paginated logs, per page 15'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/LogResource' } }
+                  links: { $ref: '#/components/schemas/LinksResponsePart' }
+                  meta: { $ref: '#/components/schemas/MetaResponsePart' }
+                type: object
+        '200_____2':
+          description: 'Success response, returns not paginated logs'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/LogResource' } }
+                type: object
+        '400':
+          description: 'Missing filter[user_uuid], it is required.'
+        '404':
+          description: 'User not found'
+  /api/users:
+    get:
+      tags:
+        - User
+      summary: 'Get all users'
+      description: 'This endpoint returns all users, either paginated or not, depending on the query parameters.'
+      operationId: fb93387dc36694526b60606326ac2db3
+      parameters:
+        -
+          $ref: '#/components/parameters/page'
+        -
+          $ref: '#/components/parameters/per_page'
+        -
+          $ref: '#/components/parameters/paginate'
+      responses:
+        '200_____1':
+          description: 'Success response, returns paginated users, per page 15'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/UserResource' } }
+                  links: { $ref: '#/components/schemas/LinksResponsePart' }
+                  meta: { $ref: '#/components/schemas/MetaResponsePart' }
+                type: object
+        '200_____2':
+          description: 'Success response, returns not paginated users'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/UserResource' } }
+                type: object
+  '/api/users/{uuid}':
+    get:
+      tags:
+        - User
+      summary: 'Get a single user by UUID'
+      description: 'This endpoint returns a single user by UUID.'
+      operationId: dfb34da309be03b01666fef9c3b87aa7
+      parameters:
+        -
+          $ref: '#/components/parameters/uuid_url_param'
+      responses:
+        '200':
+          description: 'Success response'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { $ref: '#/components/schemas/UserResource' }
+                type: object
+        '404':
+          description: 'User not found'
+    put:
+      tags:
+        - User
+      summary: 'Update a user by UUID'
+      description: 'This endpoint updates a user by UUID.'
+      operationId: 465c182a27871b330bd6f5f54350d1de
+      parameters:
+        -
+          $ref: '#/components/parameters/uuid_url_param'
+      requestBody:
+        description: 'User update data'
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  maxLength: 255
+                  example: 'John Doe'
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                  example: john.doe@email.com
+                password:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+                password_confirmation:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+              type: object
+      responses:
+        '200':
+          description: 'User updated successfully'
+        '404':
+          description: 'User not found'
+        '422':
+          description: 'Validation error'
+    delete:
+      tags:
+        - User
+      summary: 'Delete a user by UUID'
+      description: 'This endpoint deletes a user by UUID.'
+      operationId: b7b70d3ca9cb92fa346db42e949af96c
+      parameters:
+        -
+          $ref: '#/components/parameters/uuid_url_param'
+      responses:
+        '200':
+          description: 'User deleted successfully'
+        '404':
+          description: 'User not found'
+  /api/user-permissions:
+    get:
+      tags:
+        - UserPermission
+      summary: 'Get all user permissions'
+      operationId: 27d03ffff91d42911a2866b361b0f699
+      parameters:
+        -
+          $ref: '#/components/parameters/filter_by_user_uuid_param_required'
+        -
+          $ref: '#/components/parameters/filter_by_type_param'
+        -
+          $ref: '#/components/parameters/page'
+        -
+          $ref: '#/components/parameters/per_page'
+        -
+          $ref: '#/components/parameters/paginate'
+      responses:
+        '200_____1':
+          description: 'Success response, returns paginated user permissions, per page 15'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/UserPermissionResource' } }
+                  links: { $ref: '#/components/schemas/LinksResponsePart' }
+                  meta: { $ref: '#/components/schemas/MetaResponsePart' }
+                type: object
+        '200_____2':
+          description: 'Success response, returns not paginated user permissions'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { type: array, items: { $ref: '#/components/schemas/UserPermissionResource' } }
+                type: object
+        '400':
+          description: 'Missing filter[user_uuid], it is required.'
+        '404':
+          description: 'User not found'
+  /api/user-permissions/grant:
+    post:
+      tags:
+        - UserPermission
+      summary: 'Grant a permission to a user'
+      operationId: 244fa0fb3b7affbfdecbb5f067ce3b6c
+      requestBody:
+        description: 'User permission grant data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - user_uuid
+                - type
+              properties:
+                user_uuid:
+                  type: string
+                  format: uuid
+                  example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+                type:
+                  description: '1 - AZURE_READ, 2 - AZURE_UPDATE, 3 - AZURE_UPLOAD, 4 - AZURE_DELETE, 5 - AZURE_DOWNLOAD'
+                  type: integer
+                  format: int32
+                  enum: [1, 2, 3, 4, 5]
+                  example: 1
+              type: object
+      responses:
+        '200':
+          description: 'User permission granted successfully'
+        '404':
+          description: 'User not found'
+        '422':
+          description: 'Validation error'
+  /api/user-permissions/forbid:
+    delete:
+      tags:
+        - UserPermission
+      summary: 'Forbid a permission from a user'
+      operationId: 7c7855e44fedfcaa1a62b86452798783
+      requestBody:
+        description: 'User permission forbid data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - user_uuid
+                - type
+              properties:
+                user_uuid:
+                  type: string
+                  format: uuid
+                  example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+                type:
+                  description: '1 - AZURE_READ, 2 - AZURE_UPDATE, 3 - AZURE_UPLOAD, 4 - AZURE_DELETE, 5 - AZURE_DOWNLOAD'
+                  type: integer
+                  format: int32
+                  enum: [1, 2, 3, 4, 5]
+                  example: 1
+              type: object
+      responses:
+        '200':
+          description: 'User permission forbidden successfully'
+        '404':
+          description: 'User not found'
+        '422':
+          description: 'Validation error'
+components:
+  schemas:
+    LinksResponsePart:
+      title: LinksResponsePart
+      description: 'Part of successfully paginated response containing links to other pages'
+      properties:
+        first:
+          type: string
+          example: 'http://localhost:8000/api/users?page=1'
+        last:
+          type: string
+          example: 'http://localhost:8000/api/users?page=1'
+        prev:
+          type: string
+          example: 'http://localhost:8000/api/users?page=1'
+        next:
+          type: string
+          example: 'http://localhost:8000/api/users?page=1'
+      type: object
+    MetaResponsePart:
+      title: MetaResponsePart
+      description: 'Part of successfully paginated response containing meta data'
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        from:
+          type: integer
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 15
+        to:
+          type: integer
+          example: 15
+        total:
+          type: integer
+          example: 15
+        path:
+          type: string
+          example: 'http://localhost:8000/api/users'
+        links:
+          type: array
+          items:
+            properties:
+              url:
+                type: string
+                example: 'http://localhost:8000/api/users?page=1'
+              label:
+                type: string
+                example: '1'
+              active:
+                type: boolean
+                example: true
+            type: object
+      type: object
+    FileResource:
+      title: FileResource
+      description: 'File uploaded to the system'
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+        filename:
+          description: 'File name with extension'
+          type: string
+          maxLength: 255
+          example: java_is_terrible.jpg
+        extension:
+          description: 'File extension without dot'
+          type: string
+          maxLength: 255
+          example: jpg
+        size:
+          description: 'File size in bytes'
+          type: integer
+          format: int32
+          example: 1024
+        version:
+          type: integer
+          format: int32
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+      type: object
+    LogResource:
+      title: LogResource
+      description: "Log of system entity's actions"
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+        name:
+          type: string
+          maxLength: 255
+        type:
+          description: '1: USER_LOGIN, 2: USER_LOGOUT, 3: USER_REGISTER, 4: USER_UPDATE_PROFILE, 5: USER_AZURE_READ, 6: USER_AZURE_UPLOAD, 7: USER_AZURE_UPDATE, 8: USER_AZURE_DELETE, 9: USER_AZURE_DOWNLOAD'
+          type: integer
+          format: int32
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+          example: 1
+        description:
+          type: string
+          example: 'User logged in'
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+      type: object
+    UserPermissionResource:
+      title: UserPermissionResource
+      description: 'Permission that can be granted to a user'
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+        name:
+          type: string
+          maxLength: 255
+          example: AZURE_READ
+        type:
+          description: '1 - AZURE_READ, 2 - AZURE_UPDATE, 3 - AZURE_UPLOAD, 4 - AZURE_DELETE, 5 - AZURE_DOWNLOAD'
+          type: integer
+          format: int32
+          enum:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+          example: 1
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+      type: object
+    UserResource:
+      title: UserResource
+      description: 'User that uses the system'
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+        name:
+          type: string
+          maxLength: 255
+          example: 'John Doe'
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: john.doe@gmail.com
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-05-01T12:00:00+00:00'
+      type: object
+  parameters:
+    uuid_url_param:
+      name: uuid
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+    filter_by_user_uuid_param:
+      name: 'filter[user_uuid]'
+      in: query
+      description: 'Allows for filtering resources by uuid of User'
+      required: false
+      schema:
+        type: string
+        format: uuid
+        example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+    filter_by_user_uuid_param_required:
+      name: 'filter[user_uuid]'
+      in: query
+      description: 'Allows for filtering resources by uuid of User, it is required'
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 2ba0e460-ba95-4171-8a5a-e0d532835ef6
+    filter_by_type_param:
+      name: 'filter[type]'
+      in: query
+      description: 'Allows for filtering resources by their exact type'
+      required: false
+      schema:
+        type: integer
+        format: int32
+        example: 1
+    page:
+      name: page
+      in: query
+      description: 'If pagination is enabled, returns certain page of data'
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 1
+    per_page:
+      name: per_page
+      in: query
+      description: 'If pagination is enabled, returns certain amount of data per page'
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 15
+    paginate:
+      name: paginate
+      in: query
+      description: 'If pagination is enabled, returns paginated data'
+      required: false
+      schema:
+        type: boolean
+        default: true
+    type:
+      name: type
+      in: query
+      description: 'Filter by type'
+      required: false
+      schema:
+        type: integer
+        format: int32
+        default: 1
+    user_uuid:
+      name: user_uuid
+      in: path
+      description: 'Filter the data by user UUID'
+      required: true
+      schema:
+        type: string
+        format: uuid

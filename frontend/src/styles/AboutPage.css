@@ -1,0 +1,73 @@
+.leftH {
+    padding: 2rem;
+    padding-top: 1.5rem;
+    flex: 3;
+    display: flex;
+    gap: 2rem;
+    flex-direction: column;
+}
+
+.rightH {
+    flex: 1;
+    position: relative;
+}
+
+.website-title {
+    margin-top: 4rem;
+    background-color: rgb(41, 78, 179);
+    border-radius: 4rem;
+    width: fit-content;
+    padding: 20px 13px;
+    font-size: 18pt;
+    text-transform: uppercase;
+    color: white;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.website-title > span {
+    z-index: 2;
+}
+
+.encourageText {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-transform: uppercase;
+    font-size: 6rem;
+    font-weight: bold;
+    color: white;
+    text-overflow: inherit;
+}
+
+.strokeText {
+    color: transparent;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: white;
+}
+
+.lowerText {
+    font-size: 2rem;
+    font-weight: 200;
+    text-transform: none;
+    letter-spacing: 1px;
+    width: 80%;
+}
+
+.btnAbout {
+    background-color: rgb(10, 21, 49);
+    padding: 0.5rem;
+    font-weight: bold;
+    font-size: 15pt;
+    border: 4px solid transparent;
+    transition: 300ms all;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btnAbout:hover {
+    cursor: pointer;
+}

@@ -1,0 +1,99 @@
+
+.MyAccountMain {
+    background-color: #ffffff;
+    border-radius: 25px;
+    border: 4px solid #1b2430;
+    padding: 20px;
+    margin: 150px auto;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .MyAccountMain h2 {
+    color: #1b2430;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .UserName, .UserEmail, .UserPassword, .UserPasswordConfirmation {
+    text-align: left;
+    margin-bottom: 15px;
+  }
+  
+  .UserName label, .UserEmail label, .UserPassword label, .UserPasswordConfirmation label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 370px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  button {
+    background-color: #1b2430; /* Green */
+    border-radius: 25px;
+    border: 1px solid #1b2430;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+  }
+
+  .EditBtn {
+    position: relative;
+    float: left;
+  }
+
+  .SaveBtn {
+    position: relative;
+    float: right;
+  }
+
+  .SaveBtn:disabled {
+    background-color: #929dab;
+    color: black;
+    border: 1px solid #8d949a;
+  }
+
+  .DeleteBtn {
+    position: relative;
+    width: 100%;
+    background-color: #8c0c0c;
+    color: white;
+    border: 1px solid #852f2f;
+  }
+
+
+    
+  .ReturnHomeButton {
+    margin-top: 20px;
+  }
+  
+  .ReturnHomeButton a {
+    background-color: #1b2430; /* Green */
+    border-radius: 25px;
+    border: 1px solid #1b2430;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    width: fit-content;
+    display: block;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  
+  .ReturnHomeButton a:hover, .button:hover {
+    background-color: #4f6d94;
+  }
