@@ -3,7 +3,7 @@
 # Getting Started
 ## <ins>**1. Downloading the repository:**</ins>
 
-Start by cloning the repository with `git clone https://github.com/Tycjan-Fortuna-IT/IT_Core.git`.
+Start by cloning the repository with `git clone https://github.com/Skandharoots/Cloud-Computing.git`.
 
 ## <ins>**2. Frontend startup:**</ins>
 
