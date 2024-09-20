@@ -1,5 +1,10 @@
 ***
 
+#Creators
+
+Tycjan Fortuna
+Marek Kopania
+
 # Getting Started
 ## <ins>**1. Downloading the repository:**</ins>
 
